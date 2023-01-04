@@ -1,4 +1,4 @@
-import { initDB } from './dbReader'
+import { initDB } from './utils/dbReader'
 import { IRecord } from './models/record'
 import { IRecordUser } from './models/record_user'
 import { IUser } from './models/user'
