@@ -1,5 +1,3 @@
-import groupBy from 'lodash/groupBy'
-
 export interface NotaItem {
   id_pedido: number
   número_item: number
