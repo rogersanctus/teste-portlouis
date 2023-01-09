@@ -16,23 +16,5 @@ export interface FinalNota {
 }
 
 export function processNotas(rawNotas: Nota[]) {
-  const groupedNotas = groupBy(rawNotas, 'id')
-
-  const processGroup = (group: Nota[]) =>
-    group.reduce<FinalNota>((accum, nota, idx) => {
-      if (idx === 0) {
-        accum.id = nota.id
-        accum.items = []
-      }
-
-      const item = { ...nota }
-      delete (item as any).id
-
-      accum.items.push(item)
-      return accum
-    }, {} as FinalNota)
-
-  return Object.keys(groupedNotas).map<FinalNota>((key) => {
-    return processGroup(groupedNotas[key])
-  })
+  return [...rawNotas]
 }
