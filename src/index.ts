@@ -2,6 +2,7 @@ import { initDB } from './utils/dbReader'
 import { Pedido } from './models/pedido'
 import { Nota } from './models/nota'
 import groupBy from 'lodash/groupBy'
+import { processDB } from './utils/dbProcessor'
 
 interface ItemPedidoPendente {
   número_item: number
@@ -35,9 +36,7 @@ interface NotaPedido {
 }
 
 initDB('./assets/db').then((db) => {
-  //db = processDB(db)
-  //const pedidos = db.Pedidos as FinalPedido[]
-  //const notas = db.Notas as FinalNota[]
+  db = processDB(db)
   const pedidos = db.Pedidos as Pedido[]
   const notas = db.Notas as Nota[]
 
@@ -90,17 +89,16 @@ initDB('./assets/db').then((db) => {
               )
             }
 
-            const valorUnitario = Number(
-              itemPedido.valor_unitário_produto.replace(',', '.')
-            )
             let valor_total_item_pedido = 0
             let valor_total_item_notas = 0
 
-            if (!isNaN(valorUnitario)) {
+            if (!isNaN(itemPedido.valor_unitário_produto)) {
               valor_total_item_pedido =
-                itemPedido.quantidade_produto * valorUnitario
+                itemPedido.quantidade_produto *
+                itemPedido.valor_unitário_produto
               valor_total_item_notas =
-                itemNotasBrief.quantidade_produto_notas * valorUnitario
+                itemNotasBrief.quantidade_produto_notas *
+                itemPedido.valor_unitário_produto
             } else {
               throw new Error(
                 `O valor_unitário_produto para o item de número: ${itemPedido.número_item} do Pedido de id: ${itemPedido.id} não é um valor decimal monetário correto.`
@@ -111,7 +109,7 @@ initDB('./assets/db').then((db) => {
               ...itemNotasBrief,
               quantidade_produto_pedido: itemPedido.quantidade_produto,
               quantidade_pendente,
-              valor_unitário: valorUnitario,
+              valor_unitário: itemPedido.valor_unitário_produto,
               valor_total_item_pedido,
               valor_total_item_notas,
             }
