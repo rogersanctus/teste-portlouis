@@ -1,5 +1,6 @@
 import { readFile, opendir } from 'node:fs/promises'
 import { resolve } from 'node:path'
+import isValidUTF8 from 'utf-8-validate'
 
 export type DB = Record<string, unknown[] | Record<string, unknown>>
 
@@ -8,6 +9,12 @@ export async function initDB(path: string) {
 
   async function readUTF8(filename: string) {
     const buffer = await readFile(filename)
+
+    if (!isValidUTF8(buffer)) {
+      throw new Error(
+        `The input file: ${filename} is not a valid UTF-8 encoded file.`
+      )
+    }
 
     const rawData = new Uint8Array(buffer)
     const data = removeBOM(rawData)
