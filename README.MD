@@ -16,3 +16,5 @@ Uma vez com o node instalado, você precisa instalar as dependências Node. Para
 Após isso, todas as dependências estarão instaladas e você poderá rodar o projeto com o comando:
 
 ```npm start```
+
+Na versão atual, apenas um arquivo de saída será gerado. Ele estará na pasta onde se encontram os arquivos de dados de entrada do projeto, na pasta: `assets/db`. Dentro da pasta: `PedidosPendentes`. E com nome de arquivo: `Itens_Pendentes.txt`
