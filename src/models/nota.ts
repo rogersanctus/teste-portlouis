@@ -1,4 +1,5 @@
 import { isInteger, isPositive, isValidNumber } from '../utils/dataValidators'
+import { Pedido } from './pedido'
 
 export interface NotaItem {
   id_pedido: number
@@ -40,6 +41,24 @@ function validateNota(nota: Nota) {
     return new Error(
       `The quantidade_produto of the nota with id ${nota.id} is not a valid positive and integer number`
     )
+  }
+
+  return true
+}
+
+export function validateNotasItems(notas: Nota[], pedidos: Pedido[]) {
+  for (const notaItem of notas) {
+    const pedidoItem = pedidos.find(
+      (pedido) =>
+        pedido.id === notaItem.id_pedido &&
+        pedido.número_item === notaItem.número_item
+    )
+
+    if (pedidoItem === undefined) {
+      return new Error(
+        `The Item, of the Nota with id: ${notaItem.id}, with the número_item: ${notaItem.número_item} was not found in the refered Pedido with id_pedido: ${notaItem.id_pedido}`
+      )
+    }
   }
 
   return true
