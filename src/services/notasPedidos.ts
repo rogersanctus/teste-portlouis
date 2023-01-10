@@ -3,7 +3,7 @@ import groupBy from 'lodash/groupBy'
 import { ItemNotasBrief, ItemPedidoNotas } from '../models/itemPedidoNota'
 import { Nota } from '../models/nota'
 import { NotaPedido } from '../models/notaPedido'
-import { Pedido } from '../models/pedido'
+import { Pedido, validateItemsPedido } from '../models/pedido'
 
 export function makeNotasPedidos(
   groupedPedidos: Dictionary<Pedido[]>,
@@ -18,6 +18,12 @@ export function makeNotasPedidos(
       }
 
       const itemsPedido = groupedPedidos[groupKey]
+      const itemsPedidoValidation = validateItemsPedido(itemsPedido)
+
+      if (itemsPedidoValidation instanceof Error) {
+        throw itemsPedidoValidation
+      }
+
       const groupedNotas = groupBy(
         notas.filter((nota) => nota.id_pedido === id_pedido),
         'número_item'
