@@ -13,6 +13,6 @@ Uma vez com o node instalado, você precisa instalar as dependências Node. Para
 
 ```npm i```
 
-Após isso, todas as dependecias estarão instaladas e você poderá rodar o projeto com o comando:
+Após isso, todas as dependências estarão instaladas e você poderá rodar o projeto com o comando:
 
 ```npm start```
