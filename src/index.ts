@@ -1,38 +1,25 @@
 import { initDB } from './utils/dbReader'
-import { IRecord } from './models/record'
-import { IRecordUser } from './models/record_user'
-import { IUser } from './models/user'
+import { Pedido } from './models/pedido'
+import { Nota, validateNotasItems } from './models/nota'
 import groupBy from 'lodash/groupBy'
+import { processDB } from './utils/dbProcessor'
+import { makeNotasPedidos } from './services/notasPedidos'
+import { makePedidosPendentes } from './services/pedidosPendentes'
 
 initDB('./assets/db').then((db) => {
-  const users = db.Users as IUser[]
-  const records = db.Records as IRecord[]
+  db = processDB(db)
+  const pedidos = db.Pedidos as Pedido[]
+  const notas = db.Notas as Nota[]
 
-  const groupedRecords = groupBy(records, 'id')
+  const notasItemsValidation = validateNotasItems(notas, pedidos)
 
-  const recordsUsers = Object.keys(groupedRecords).map<IRecordUser>(
-    (groupedRecordKey) => {
-      const records = groupedRecords[groupedRecordKey]
-      const initialRecordUser: IRecordUser = {
-        record_id: -1,
-        users: [],
-      }
+  if (notasItemsValidation instanceof Error) {
+    throw notasItemsValidation
+  }
 
-      return records.reduce<IRecordUser>((accum, record, idx) => {
-        if (idx === 0) {
-          accum.record_id = record.id
-        }
+  const groupedPedidos = groupBy(pedidos, 'id')
+  const notasPedidos = makeNotasPedidos(groupedPedidos, notas)
+  const pedidosPendentes = makePedidosPendentes(notasPedidos)
 
-        const user = users.find((user) => user.id === record.user_id)
-
-        if (user) {
-          accum.users.push(user)
-        }
-
-        return accum
-      }, initialRecordUser)
-    }
-  )
-
-  console.dir(recordsUsers, { depth: Infinity })
+  console.dir(pedidosPendentes, { depth: Infinity })
 })
